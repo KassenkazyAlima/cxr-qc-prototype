@@ -1,14 +1,4 @@
-  # Medical Dashboard Prototype
-
-  This is a code bundle for Medical Dashboard Prototype. The original project is available at https://www.figma.com/design/WLFp2lNkhfrF8f7wsLjPBw/Medical-Dashboard-Prototype.
-
-  ## Running the code
-
-  Run `npm i` to install the dependencies.
-
-  Run `npm run dev` to start the development server.
   
-
 ---
 
 ```markdown
@@ -22,61 +12,6 @@ This system allows authenticated users to:
 - Generate and download detailed PDF reports
 - View analytics dashboards
 
----
-
-## Tech Stack
-
-| Component | Technology |
-|------------|-------------|
-| **Frontend** | React + TypeScript + Vite + TailwindCSS |
-| **Backend** | FastAPI (Python 3.10+) |
-| **Database** | SQLite (default) |
-| **Auth** | JWT-based authentication |
-| **Reports** | PDF generation via FastAPI |
-
----
-
-## Project Structure
-
-```
-
-cxr-qc-prototype/
-│
-├── src/
-│   ├── components/
-│   │   ├── LoginPage.tsx
-│   │   ├── DashboardPage.tsx
-│   │   ├── ImageViewerPage.tsx
-│   │   ├── QCReportPage.tsx
-│   │   └── AnalyticsPage.tsx
-│   ├── styles/
-│   ├── main.tsx
-│   └── App.tsx
-│
-├── .env
-├── package.json
-├── vite.config.ts
-└── README.md
-
-```
-
-Backend (separate project):
-```
-
-AutoQC-Chest-Xray-main/
-├── backend/
-│   ├── main.py
-│   ├── auth.py
-│   ├── db.py
-│   ├── models.py
-│   └── routers/
-│       ├── reports.py
-│       └── records.py
-
-````
-
----
-
 ## Prerequisites
 
 Before running this project, make sure you have:
@@ -85,8 +20,6 @@ Before running this project, make sure you have:
 - Python **v3.10+**
 - pip or pipenv/venv
 - Git
-
----
 
 ## Frontend Setup (React + Vite)
 
@@ -118,7 +51,6 @@ npm run dev
 ✅ App will run on
 [http://localhost:5174](http://localhost:5174)
 
----
 
 
 ## Backend Setup (FastAPI)
