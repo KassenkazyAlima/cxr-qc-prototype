@@ -25,7 +25,7 @@ Before running this project, make sure you have:
 
 1. Clone this repo:
 
-```bash
+```
 git clone https://github.com/KassenkazyAlima/cxr-qc-prototype.git
 cd cxr-qc-prototype
 ```
@@ -48,7 +48,7 @@ VITE_API_BASE_URL=http://localhost:8000
 npm run dev
 ```
 
-✅ App will run on
+App will run on
 [http://localhost:5174](http://localhost:5174)
 
 
