@@ -1,7 +1,4 @@
-  
----
 
-```markdown
 # CXR Quality Control (Prototype)
 
 A prototype for **automatic chest X-ray quality control**, combining a FastAPI backend with a React + Vite frontend.
