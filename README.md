@@ -22,13 +22,6 @@ This system allows authenticated users to:
 
 ---
 
-## 🗂 Project Structure
-
-cxr-qc-prototype/ │ ├── src/ │ ├── components/ │ │ ├── LoginPage.tsx │ │ ├── DashboardPage.tsx │ │ ├── ImageViewerPage.tsx │ │ ├── QCReportPage.tsx │ │ └── AnalyticsPage.tsx │ ├── styles/ │ ├── main.tsx │ └── App.tsx │ ├── .env ├── package.json ├── vite.config.ts └── README.md
-Backend (separate project):
-AutoQC-Chest-Xray-main/ ├── backend/ │ ├── main.py │ ├── auth.py │ ├── db.py │ ├── models.py │ └── routers/ │ ├── reports.py │ └── records.py
----
-
 ## ⚙️ Prerequisites
 
 Before running this project, make sure you have:
@@ -46,27 +39,28 @@ Before running this project, make sure you have:
    ```bash
    git clone https://github.com/KassenkazyAlima/cxr-qc-prototype.git
    cd cxr-qc-prototype
+
 2. Install dependencies:npm install
-3. 
-4. Create a .env file in the root directory:VITE_API_BASE_URL=http://localhost:8000
-5. 
-6. Start the frontend:npm run dev
-7. 
+
+3. Create a .env file in the root directory:VITE_API_BASE_URL=http://localhost:8000
+
+4. Start the frontend:npm run dev
+
 ✅ App will run on http://localhost:5174
 
 🧩 Backend Setup (FastAPI)
 1. Navigate to your backend folder:cd /path/to/AutoQC-Chest-Xray-main
-2. 
-3. Create and activate a virtual environment:python -m venv .venv
-4. source .venv/bin/activate   # Mac/Linux
-5. .venv\Scripts\activate      # Windows
-6. 
-7. Install dependencies:pip install -r requirements.txt
-8. 
-9. (Optional) Seed initial admin data:python backend/seed.py
-10. 
-11. Start the backend:uvicorn backend.main:app --reload --port 8000
-12. 
+
+2. Create and activate a virtual environment:python -m venv .venv
+
+3. source .venv/bin/activate   # Mac/Linux  '.venv\Scripts\activate'      # Windows
+
+4. Install dependencies:pip install -r requirements.txt
+ 
+5. (Optional) Seed initial admin data:python backend/seed.py
+ 
+6. Start the backend:uvicorn backend.main:app --reload --port 8000
+ 
 ✅ API will be available at http://localhost:8000/docs (Swagger UI)
 
 🔐 Default Login
