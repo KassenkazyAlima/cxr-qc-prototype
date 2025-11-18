@@ -1,5 +1,6 @@
 import React from "react";
-import { Home, Search, FileText, BarChart3, Settings, Activity } from 'lucide-react';
+import { Home, Search, FileText, BarChart3, Settings, Activity, UserPlus } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface SidebarProps {
   currentPage: string;
@@ -8,11 +9,12 @@ interface SidebarProps {
 
 export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home },
-    { id: 'viewer', label: 'QC Viewer', icon: Search },
-    { id: 'reports', label: 'Reports', icon: FileText },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: "dashboard", label: "Dashboard", icon: Home },
+    { id: "viewer", label: "QC Viewer", icon: Search },
+    { id: "register", label: "Register patient", icon: UserPlus },
+    { id: "reports", label: "Reports", icon: FileText },
+    { id: "analytics", label: "Analytics", icon: BarChart3 },
+    { id: "settings", label: "Settings", icon: Settings },
   ];
 
   return (
@@ -41,9 +43,7 @@ export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
                 <button
                   onClick={() => onNavigate(item.id)}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                    isActive
-                      ? 'bg-blue-50 text-blue-600'
-                      : 'text-gray-600 hover:bg-gray-50'
+                    isActive ? "bg-blue-50 text-blue-600" : "text-gray-600 hover:bg-gray-50"
                   }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -70,3 +70,5 @@ export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
     </div>
   );
 }
+
+
