@@ -46,22 +46,23 @@ Before running this project, make sure you have:
 
 4. Start the frontend:npm run dev
 
-✅ App will run on http://localhost:5174
+App will run on http://localhost:5174
 
-## Backend Link (FastAPI) : https://github.com/KaminurOrynbek/AutoQC-Chest-Xray/tree/main/backend
+## Backend (FastAPI)
+source link:  https://github.com/KaminurOrynbek/AutoQC-Chest-Xray/tree/main/backend
  
-✅ API will be available at http://localhost:8000/docs (Swagger UI)
+API will be available at http://localhost:8000/docs (Swagger UI)
 
-🔐 Default Login
+Default Login
 After seeding the database, use:
 Username: admin
 Password: password
 
 
-🧠 Common Issues
+Common Issues
 1. Cannot log in / 422 Unprocessable Content
 
-➡ Check that backend /auth/login expects form data or query params.Frontend uses JSON POST (username, password).
+    ➡ Check that backend /auth/login expects form data or query params.Frontend uses JSON POST (username, password).
 
 
 2. CORS errors
@@ -75,15 +76,16 @@ from fastapi.middleware.cors import CORSMiddleware
       allow_credentials=True,
       allow_methods=["*"],
       allow_headers=["*"],
-)
+    )
 
 3. .env not working in Vite
 
-➡ Ensure you restart npm run dev after creating .env.
+    ➡ Ensure you restart npm run dev after creating .env.
 
 
 
 📦 Build for Production
+
     ```bash 
     npm run build
 Then deploy the built files from dist/.
