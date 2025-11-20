@@ -1,14 +1,21 @@
 {
     "cSpell.words": [
-      "Vite",
-      "vite",
-      "uvicorn",
+      "Alima",
+      "Aruzhan",
+      "behaviour",
+      "cmdk",
+      "Diagnost",
+      "DICOM",
       "fastapi",
-      "pipenv",
-      "venv",
-      "Multix",
       "Kassenkazy",
-      "Alima"
+      "Multix",
+      "pipenv",
+      "Tulegenova",
+      "uvicorn",
+      "vaul",
+      "venv",
+      "vite",
+      "Vite"
     ],
     "cSpell.enabledFileTypes": {
       "gitignore": false

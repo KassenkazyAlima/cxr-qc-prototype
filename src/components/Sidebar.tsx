@@ -1,20 +1,28 @@
+// src/components/Sidebar.tsx
 import React from "react";
-import { Home, Search, FileText, BarChart3, Settings, Activity, UserPlus } from "lucide-react";
-import { Link } from "react-router-dom";
+import {
+  Home,
+  Search,
+  FileText,
+  BarChart3,
+  Settings,
+  Activity,
+  UserPlus,
+  Users,
+} from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 
-interface SidebarProps {
-  currentPage: string;
-  onNavigate: (page: string) => void;
-}
+export function Sidebar() {
+  const location = useLocation();
 
-export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
   const menuItems = [
-    { id: "dashboard", label: "Dashboard", icon: Home },
-    { id: "viewer", label: "QC Viewer", icon: Search },
-    { id: "register", label: "Register patient", icon: UserPlus },
-    { id: "reports", label: "Reports", icon: FileText },
-    { id: "analytics", label: "Analytics", icon: BarChart3 },
-    { id: "settings", label: "Settings", icon: Settings },
+    { id: "dashboard", label: "Dashboard", icon: Home, path: "/dashboard" },
+    { id: "viewer", label: "QC Viewer", icon: Search, path: "/viewer" },
+    { id: "register", label: "Register patient", icon: UserPlus, path: "/register" },
+    { id: "patients", label: "Patients", icon: Users, path: "/patients" },
+    { id: "reports", label: "Reports", icon: FileText, path: "/reports" },
+    { id: "analytics", label: "Analytics", icon: BarChart3, path: "/analytics" },
+    { id: "settings", label: "Settings", icon: Settings, path: "/settings" }, // placeholder
   ];
 
   return (
@@ -37,18 +45,20 @@ export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
         <ul className="space-y-2">
           {menuItems.map((item) => {
             const Icon = item.icon;
-            const isActive = currentPage === item.id;
+            const isActive = location.pathname.startsWith(item.path);
             return (
               <li key={item.id}>
-                <button
-                  onClick={() => onNavigate(item.id)}
+                <Link
+                  to={item.path}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                    isActive ? "bg-blue-50 text-blue-600" : "text-gray-600 hover:bg-gray-50"
+                    isActive
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-gray-600 hover:bg-gray-50"
                   }`}
                 >
                   <Icon className="w-5 h-5" />
                   <span>{item.label}</span>
-                </button>
+                </Link>
               </li>
             );
           })}
@@ -70,5 +80,3 @@ export function Sidebar({ currentPage, onNavigate }: SidebarProps) {
     </div>
   );
 }
-
-
