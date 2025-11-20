@@ -1,4 +1,3 @@
-// src/App.tsx
 import React, { useState } from "react";
 import {
   BrowserRouter as Router,
@@ -16,6 +15,7 @@ import { QCReportPage } from "./components/QCReportPage";
 import { AnalyticsPage } from "./components/AnalyticsPage";
 import { PatientRegistrationPage } from "./components/PatientRegistrationPage";
 import { AdminPatientsPage } from "./components/AdminPatientsPage";
+import { AdminUsersPage } from "./components/AdminUsersPage";
 
 // Shell with sidebar + routes, used only after login
 function AppShell() {
@@ -65,6 +65,9 @@ function AppShell() {
           element={<PatientRegistrationPage />}
         />
 
+        {/* admin users list */}
+        <Route path="/admin-users" element={<AdminUsersPage />} />
+
         {/* reports + analytics */}
         <Route path="/reports" element={<QCReportPage />} />
         <Route path="/analytics" element={<AnalyticsPage />} />
@@ -80,7 +83,7 @@ export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleLogin = () => {
-    // later you’ll store token/role here as well
+    // позже сюда добавишь токен/роль
     setIsLoggedIn(true);
   };
 

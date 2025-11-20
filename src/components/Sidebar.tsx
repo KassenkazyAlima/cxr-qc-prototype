@@ -1,4 +1,3 @@
-// src/components/Sidebar.tsx
 import React from "react";
 import {
   Home,
@@ -9,6 +8,7 @@ import {
   Activity,
   UserPlus,
   Users,
+  Shield,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -18,11 +18,27 @@ export function Sidebar() {
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: Home, path: "/dashboard" },
     { id: "viewer", label: "QC Viewer", icon: Search, path: "/viewer" },
-    { id: "register", label: "Register patient", icon: UserPlus, path: "/register" },
+    {
+      id: "register",
+      label: "Register patient",
+      icon: UserPlus,
+      path: "/register",
+    },
     { id: "patients", label: "Patients", icon: Users, path: "/patients" },
     { id: "reports", label: "Reports", icon: FileText, path: "/reports" },
     { id: "analytics", label: "Analytics", icon: BarChart3, path: "/analytics" },
-    { id: "settings", label: "Settings", icon: Settings, path: "/settings" }, // placeholder
+    {
+      id: "admin-users",
+      label: "Admin users",
+      icon: Shield,
+      path: "/admin-users",
+    },
+    {
+      id: "settings",
+      label: "Settings",
+      icon: Settings,
+      path: "/settings",
+    },
   ];
 
   return (

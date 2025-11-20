@@ -26,15 +26,37 @@ type AnalyzeResponse = {
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
 
-// Helper: normalize backend QC payload into AnalyzeResponse
-function normalizeML(raw: any): AnalyzeResponse {
-  const src = raw?.ml_results ?? raw ?? {};
+// Человекочитаемый label
+function prettyLabel(raw: string): string {
+  return raw
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+// Нормализуем ответ QC-сервиса с qc_probs
+function normalizeFromQC(raw: any): AnalyzeResponse {
+  const probs = raw?.qc_probs ?? {};
+  const entries = Object.entries(probs) as [string, number][];
+
+  // сортируем по вероятности
+  entries.sort((a, b) => (b[1] ?? 0) - (a[1] ?? 0));
+
+  const threshold = 0.5;
+  const all = entries.map(([label, prob]) => ({
+    label: prettyLabel(label),
+    prob: Number(prob) || 0,
+  }));
+  const top3 = all.slice(0, 3);
+  const positives = all
+    .filter((r) => r.prob >= threshold)
+    .map((r) => r.label);
+
   return {
-    filename: src.filename ?? "",
-    threshold: typeof src.threshold === "number" ? src.threshold : 0.5,
-    top3: Array.isArray(src.top3) ? src.top3 : [],
-    positives: Array.isArray(src.positives) ? src.positives : [],
-    all: Array.isArray(src.all) ? src.all : [],
+    filename: raw?.filename ?? "",
+    threshold,
+    top3,
+    positives,
+    all,
   };
 }
 
@@ -42,7 +64,8 @@ export function ImageViewerPage({
   patientId,
   onGenerateReport,
 }: ImageViewerPageProps) {
-  const [assignedPatientId, setAssignedPatientId] = useState<string>(patientId);
+  const [assignedPatientId, setAssignedPatientId] =
+    useState<string>(patientId);
   const [viewType, setViewType] = useState<string>("PA");
 
   const [file, setFile] = useState<File | null>(null);
@@ -62,17 +85,17 @@ export function ImageViewerPage({
     setPreview(f ? URL.createObjectURL(f) : null);
   };
 
-  // 1) Create exam in backend
+  // 1) создать exam
   const createExam = async (pid: string): Promise<number> => {
     const payload = {
       patient_id: pid,
       view_type: viewType || "PA",
+      // остальные поля (device, technician и т.п.) можно добавить позже
     };
+
     const res = await fetch(`${API_BASE}/exams/`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
     if (!res.ok) {
@@ -80,26 +103,29 @@ export function ImageViewerPage({
       throw new Error(`Create exam failed (${res.status}): ${txt}`);
     }
     const data = await res.json();
-    // Accept either id or exam_id
     return data.id ?? data.exam_id;
   };
 
-  // 2) Upload image for QC
+  // 2) загрузить файл в QC
   const uploadForQC = async (examId: number, f: File) => {
     const fd = new FormData();
-    // You can rename the field based on your FastAPI endpoint
-    fd.append("image", f);
+    // ВАЖНО: имя поля в FastAPI — file
+    fd.append("file", f);
 
-    const res = await fetch(`${API_BASE}/qc/${examId}/upload`, {
-      method: "POST",
-      body: fd,
-    });
+    // user_id=1 — твой admin из таблицы users
+    const res = await fetch(
+      `${API_BASE}/qc/qc/${examId}/upload?user_id=1`,
+      {
+        method: "POST",
+        body: fd,
+      }
+    );
     if (!res.ok) {
       const txt = await res.text();
       throw new Error(`QC upload failed (${res.status}): ${txt}`);
     }
     const data = await res.json();
-    return normalizeML(data);
+    return normalizeFromQC(data);
   };
 
   const handleDetect = async () => {
@@ -118,11 +144,9 @@ export function ImageViewerPage({
     setResult(null);
 
     try {
-      // Step 1: create exam
       const newExamId = await createExam(pid);
       setExamId(newExamId);
 
-      // Step 2: upload image for QC
       const mlResult = await uploadForQC(newExamId, file);
       setResult(mlResult);
     } catch (e: any) {
@@ -132,7 +156,6 @@ export function ImageViewerPage({
     }
   };
 
-  // simple helper to show probability as %
   const pct = (p: number) => Math.round(p * 100);
 
   const handleGenerateReportClick = async () => {
@@ -143,9 +166,7 @@ export function ImageViewerPage({
     try {
       const res = await fetch(`${API_BASE}/qc/${examId}/report`, {
         method: "GET",
-        headers: {
-          Accept: "application/pdf",
-        },
+        headers: { Accept: "application/pdf" },
       });
       if (!res.ok) {
         const txt = await res.text();
@@ -154,8 +175,7 @@ export function ImageViewerPage({
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       window.open(url, "_blank", "noopener,noreferrer");
-      // optionally: URL.revokeObjectURL(url) after some timeout
-      onGenerateReport(); // keep navigation behaviour if you keep Reports page
+      onGenerateReport();
     } catch (e: any) {
       alert(e?.message ?? "Failed to generate/open report");
     }
@@ -175,7 +195,10 @@ export function ImageViewerPage({
           {/* Patient assignment + view type */}
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center bg-white border rounded-xl px-4 py-3">
             <div>
-              <Label htmlFor="assignedPatientId" className="text-xs text-gray-500">
+              <Label
+                htmlFor="assignedPatientId"
+                className="text-xs text-gray-500"
+              >
                 Assigned patient ID
               </Label>
               <Input
@@ -183,12 +206,15 @@ export function ImageViewerPage({
                 value={assignedPatientId}
                 onChange={(e) => setAssignedPatientId(e.target.value)}
                 className="mt-1 h-8 text-sm"
-                placeholder="e.g. PT-2025-001"
+                placeholder="e.g. P-1001"
               />
             </div>
 
             <div>
-              <Label htmlFor="viewType" className="text-xs text-gray-500">
+              <Label
+                htmlFor="viewType"
+                className="text-xs text-gray-500"
+              >
                 View type
               </Label>
               <select
@@ -206,7 +232,7 @@ export function ImageViewerPage({
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left: Upload & Preview */}
+          {/* LEFT: upload & preview */}
           <div className="bg-white rounded-xl border border-gray-200 p-6">
             <h2 className="text-gray-900 mb-4">X-ray</h2>
 
@@ -257,7 +283,7 @@ export function ImageViewerPage({
             )}
           </div>
 
-          {/* Right: Analysis */}
+          {/* RIGHT: analysis */}
           <div className="bg-white rounded-xl border border-gray-200 p-6">
             <h2 className="text-gray-900 mb-4">Analysis Results</h2>
 
@@ -289,7 +315,7 @@ export function ImageViewerPage({
               </div>
             ) : (
               <div className="space-y-6">
-                {/* Top-3 block */}
+                {/* Top-3 */}
                 <div>
                   <p className="text-gray-900 font-medium mb-2">
                     Top-3 findings
@@ -312,7 +338,7 @@ export function ImageViewerPage({
                   </div>
                 </div>
 
-                {/* Positives chips (above threshold) */}
+                {/* Positives */}
                 <div>
                   <p className="text-gray-900 font-medium mb-2">
                     Positives (≥ {Math.round(result.threshold * 100)}%)
@@ -337,9 +363,11 @@ export function ImageViewerPage({
                   )}
                 </div>
 
-                {/* Full table */}
+                {/* All classes */}
                 <div>
-                  <p className="text-gray-900 font-medium mb-2">All classes</p>
+                  <p className="text-gray-900 font-medium mb-2">
+                    All classes
+                  </p>
                   <div className="max-h-72 overflow-auto border border-gray-200 rounded-lg">
                     <table className="w-full text-sm">
                       <thead className="bg-gray-50">
